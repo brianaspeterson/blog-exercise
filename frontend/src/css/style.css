@@ -1,0 +1,110 @@
+body {
+  min-height: 100vh;
+}
+
+.blog-header {
+  padding: 28px 0 14px 0;
+  font-family: 'adobe-caslon-pro';
+  font-size: 54px;
+  font-style: italic;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.blog-body {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  height: calc(100vh - 97px);
+}
+
+.blog-body__form-section {
+  flex: 1 0 250px;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+  font-family: 'ff-tisa-sans-web-pro';
+}
+
+.blog-body__form-section__form__title {
+  height: 50px;
+  padding: 10px;
+  border: 0;
+  outline: none;
+  border-bottom: 1px solid #777;
+
+  font-family: 'ff-tisa-sans-web-pro';
+  font-size: 24px;
+}
+
+.blog-body__form-section__form {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-body__form-section__form__body-label {
+  padding: 16px 0;
+}
+
+.blog-body__form-section__form__body {
+  height: 400px;
+  padding: 16px;
+  outline: none;
+  resize: none;
+  margin-bottom: 16px;
+  border: 1px solid #777;
+  font-family: 'ff-tisa-sans-web-pro';
+  font-size: 16px;
+}
+
+.blog-body__form-section__form__submit {
+  border: 0;
+  padding: 8px;
+  font-size: 16px;
+  background-color: #63b0e3;
+  color: #eee;
+  font-family: 'ff-tisa-sans-web-pro';
+  text-transform: uppercase;
+  outline: none;
+}
+
+.blog-body__form-section__form__submit:hover {
+  cursor: pointer;
+  background-color: #3498db;
+}
+
+.blog-body__form-section__form__submit:active {
+  background-color: #2385c7;
+}
+
+.blog-body__content {
+  flex: 2 0 500px;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+}
+
+.blog-post {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #dedede;
+}
+
+.blog-post__title {
+  font-size: 32px;
+  font-family: 'adobe-caslon-pro';
+  font-weight: 700;
+  padding: 16px 0;
+}
+
+.blog-post__body {
+  font-family: 'ff-tisa-sans-web-pro';
+}

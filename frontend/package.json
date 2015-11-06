@@ -1,0 +1,14 @@
+{
+  "name": "frontend-code-test",
+  "version": "1.0.0",
+  "description": "SeatGeek's Frontend Code Test",
+  "main": "src/index.js",
+  "author": "SeatGeek (http://seatgeek.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^3.8.0"
+  },
+  "devDependencies": {
+    "webpack": "^1.8.11"
+  }
+}
