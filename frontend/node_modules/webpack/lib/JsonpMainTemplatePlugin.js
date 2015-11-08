@@ -4,8 +4,7 @@
 */
 var Template = require("./Template");
 
-function JsonpMainTemplatePlugin() {
-}
+function JsonpMainTemplatePlugin() {}
 module.exports = JsonpMainTemplatePlugin;
 
 JsonpMainTemplatePlugin.prototype.constructor = JsonpMainTemplatePlugin;
@@ -53,25 +52,25 @@ JsonpMainTemplatePlugin.prototype.apply = function(mainTemplate) {
 				"script.async = true;",
 				crossOriginLoading ? "script.crossOrigin = '" + crossOriginLoading + "';" : "",
 				"script.src = " + this.requireFn + ".p + " +
-					this.applyPluginsWaterfall("asset-path", JSON.stringify(chunkFilename), {
-						hash: "\" + " + this.renderCurrentHashCode(hash) + " + \"",
+				this.applyPluginsWaterfall("asset-path", JSON.stringify(chunkFilename), {
+					hash: "\" + " + this.renderCurrentHashCode(hash) + " + \"",
+					hashWithLength: function(length) {
+						return "\" + " + this.renderCurrentHashCode(hash, length) + " + \"";
+					}.bind(this),
+					chunk: {
+						id: "\" + chunkId + \"",
+						hash: "\" + " + JSON.stringify(chunkMaps.hash) + "[chunkId] + \"",
 						hashWithLength: function(length) {
-							return "\" + " + this.renderCurrentHashCode(hash, length) + " + \"";
-						}.bind(this),
-						chunk: {
-							id: "\" + chunkId + \"",
-							hash: "\" + " + JSON.stringify(chunkMaps.hash) + "[chunkId] + \"",
-							hashWithLength: function(length) {
-								var shortChunkHashMap = {};
-								Object.keys(chunkMaps.hash).forEach(function(chunkId) {
-									if(typeof chunkMaps.hash[chunkId] === "string")
-										shortChunkHashMap[chunkId] = chunkMaps.hash[chunkId].substr(0, length);
-								});
-								return "\" + " + JSON.stringify(shortChunkHashMap) + "[chunkId] + \"";
-							},
-							name: "\" + (" + JSON.stringify(chunkMaps.name) + "[chunkId]||chunkId) + \""
-						}
-					}) + ";",
+							var shortChunkHashMap = {};
+							Object.keys(chunkMaps.hash).forEach(function(chunkId) {
+								if(typeof chunkMaps.hash[chunkId] === "string")
+									shortChunkHashMap[chunkId] = chunkMaps.hash[chunkId].substr(0, length);
+							});
+							return "\" + " + JSON.stringify(shortChunkHashMap) + "[chunkId] + \"";
+						},
+						name: "\" + (" + JSON.stringify(chunkMaps.name) + "[chunkId]||chunkId) + \""
+					}
+				}) + ";",
 				"head.appendChild(script);"
 			]),
 			"}"
@@ -103,8 +102,7 @@ JsonpMainTemplatePlugin.prototype.apply = function(mainTemplate) {
 					"}",
 					"if(parentJsonpFunction) parentJsonpFunction(chunkIds, moreModules);",
 					"while(callbacks.length)",
-					this.indent("callbacks.shift().call(null, " + this.requireFn + ");"),
-					(this.entryPointInChildren(chunk) ? [
+					this.indent("callbacks.shift().call(null, " + this.requireFn + ");"), (this.entryPointInChildren(chunk) ? [
 						"if(moreModules[0]) {",
 						this.indent([
 							"installedModules[0] = 0;",

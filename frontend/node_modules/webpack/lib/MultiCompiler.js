@@ -88,6 +88,7 @@ function MultiCompiler(compilers) {
 module.exports = MultiCompiler;
 
 MultiCompiler.prototype = Object.create(Tapable.prototype);
+MultiCompiler.prototype.constructor = MultiCompiler;
 
 MultiCompiler.prototype.watch = function(watchDelay, handler) {
 	var watchings = this.compilers.map(function(compiler) {
@@ -122,13 +123,17 @@ function MultiStats(stats) {
 MultiStats.prototype.hasErrors = function() {
 	return this.stats.map(function(stat) {
 		return stat.hasErrors();
-	}).reduce(function(a, b) { return a || b; }, false);
+	}).reduce(function(a, b) {
+		return a || b;
+	}, false);
 };
 
 MultiStats.prototype.hasWarnings = function() {
 	return this.stats.map(function(stat) {
 		return stat.hasWarnings();
-	}).reduce(function(a, b) { return a || b; }, false);
+	}).reduce(function(a, b) {
+		return a || b;
+	}, false);
 };
 
 MultiStats.prototype.toJson = function(options, forToString) {

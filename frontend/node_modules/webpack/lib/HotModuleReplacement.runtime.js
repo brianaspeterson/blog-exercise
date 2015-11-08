@@ -42,6 +42,7 @@ module.exports = function() {
 				} finally {
 					finishChunkLoading();
 				}
+
 				function finishChunkLoading() {
 					hotChunksLoading--;
 					if(hotStatus === "prepare") {
@@ -74,18 +75,20 @@ module.exports = function() {
 					hot._selfAccepted = true;
 				else if(typeof dep === "function")
 					hot._selfAccepted = dep;
-				else if(typeof dep === "number")
+				else if(typeof dep === "object")
+					for(var i = 0; i < dep.length; i++)
+						hot._acceptedDependencies[dep[i]] = callback;
+				else
 					hot._acceptedDependencies[dep] = callback;
-				else for(var i = 0; i < dep.length; i++)
-					hot._acceptedDependencies[dep[i]] = callback;
 			},
 			decline: function(dep) {
 				if(typeof dep === "undefined")
 					hot._selfDeclined = true;
 				else if(typeof dep === "number")
 					hot._declinedDependencies[dep] = true;
-				else for(var i = 0; i < dep.length; i++)
-					hot._declinedDependencies[dep[i]] = true;
+				else
+					for(var i = 0; i < dep.length; i++)
+						hot._declinedDependencies[dep[i]] = true;
 			},
 			dispose: function(callback) {
 				hot._disposeHandlers.push(callback);
@@ -139,6 +142,11 @@ module.exports = function() {
 	// The update info
 	var hotUpdate, hotUpdateNewHash;
 
+	function toModuleId(id) {
+		var isNumber = (+id) + "" === id;
+		return isNumber ? +id : id;
+	}
+
 	function hotCheck(apply, callback) {
 		if(hotStatus !== "idle") throw new Error("check() is only allowed in idle status");
 		if(typeof apply === "function") {
@@ -146,7 +154,9 @@ module.exports = function() {
 			callback = apply;
 		} else {
 			hotApplyOnUpdate = apply;
-			callback = callback || function(err) { if(err) throw err; };
+			callback = callback || function(err) {
+				if(err) throw err;
+			};
 		}
 		hotSetStatus("check");
 		hotDownloadManifest(function(err, update) {
@@ -167,7 +177,8 @@ module.exports = function() {
 			hotSetStatus("prepare");
 			hotCallback = callback;
 			hotUpdate = {};
-			/*foreachInstalledChunks*/ { // eslint-disable-line no-lone-blocks
+			/*foreachInstalledChunks*/
+			{ // eslint-disable-line no-lone-blocks
 				/*globals chunkId */
 				hotEnsureUpdateChunk(chunkId);
 			}
@@ -212,7 +223,7 @@ module.exports = function() {
 			var outdatedModules = [];
 			for(var id in hotUpdate) {
 				if(Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
-					outdatedModules.push(+id);
+					outdatedModules.push(toModuleId(id));
 				}
 			}
 			callback(null, outdatedModules);
@@ -225,10 +236,14 @@ module.exports = function() {
 			callback = options;
 			options = {};
 		} else if(options && typeof options === "object") {
-			callback = callback || function(err) { if(err) throw err; };
+			callback = callback || function(err) {
+				if(err) throw err;
+			};
 		} else {
 			options = {};
-			callback = callback || function(err) { if(err) throw err; };
+			callback = callback || function(err) {
+				if(err) throw err;
+			};
 		}
 
 		function getAffectedStuff(module) {
@@ -268,6 +283,7 @@ module.exports = function() {
 
 			return [outdatedModules, outdatedDependencies];
 		}
+
 		function addAllToSet(a, b) {
 			for(var i = 0; i < b.length; i++) {
 				var item = b[i];
@@ -283,7 +299,7 @@ module.exports = function() {
 		var appliedUpdate = {};
 		for(var id in hotUpdate) {
 			if(Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
-				var moduleId = +id;
+				var moduleId = toModuleId(id);
 				var result = getAffectedStuff(moduleId);
 				if(!result) {
 					if(options.ignoreUnaccepted)

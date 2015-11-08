@@ -86,9 +86,9 @@ OldNodeWatchFileSystem.prototype.watch = function(files, dirs, missing, startTim
 					var isFile = false;
 					if(item.files) {
 						if(binarySearch(item.files, function(path) {
-							if(path === file) return 0;
-							return path < file ? -1 : 1;
-						}) >= 0) {
+								if(path === file) return 0;
+								return path < file ? -1 : 1;
+							}) >= 0) {
 							isFile = true;
 						}
 					}
@@ -162,12 +162,14 @@ OldNodeWatchFileSystem.prototype.watch = function(files, dirs, missing, startTim
 				}, onWatcherApplied);
 			});
 		} else onWatcherApplied();
+
 		function onWatcherApplied() {
 			readStat(item, function() {
 				callback();
 				done();
 			});
 		}
+
 		function done() {
 			if(closed) return;
 			if(isScheduled) {

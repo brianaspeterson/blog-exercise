@@ -16,6 +16,8 @@ function ContextModuleFactory(resolvers) {
 module.exports = ContextModuleFactory;
 
 ContextModuleFactory.prototype = Object.create(Tapable.prototype);
+ContextModuleFactory.prototype.constructor = ContextModuleFactory;
+
 ContextModuleFactory.prototype.create = function(context, dependency, callback) {
 	this.applyPluginsAsyncWaterfall("before-resolve", {
 		context: context,
@@ -118,7 +120,9 @@ ContextModuleFactory.prototype.resolveDependencies = function resolveDependencie
 
 				if(!result) return callback(null, []);
 
-				callback(null, result.filter(function(i) { return !!i; }).reduce(function(a, i) {
+				callback(null, result.filter(function(i) {
+					return !!i;
+				}).reduce(function(a, i) {
 					return a.concat(i);
 				}, []));
 			});
