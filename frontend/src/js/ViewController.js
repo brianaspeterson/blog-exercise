@@ -25,6 +25,7 @@ ViewController.prototype.establishHandlers = function() {
     e.preventDefault();
     var title = document.getElementsByClassName('blog-body__form-section__form__title')[0].value;
     var body = document.getElementsByClassName('blog-body__form-section__form__body')[0].value;
+    
     that.handleSubmit({
       title: title,
       body: body
