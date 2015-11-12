@@ -51,6 +51,15 @@ var API = {
       result.body = stringData;
     }
     return result;
+  },
+  removePost: function(data) {
+    var result = {
+      status: 200
+    };
+
+    localStorage.removeItem(POST_KEY_PREFIX + data);
+
+    return result;
   }
 }
 
