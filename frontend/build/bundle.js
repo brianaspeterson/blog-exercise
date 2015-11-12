@@ -65,6 +65,7 @@
 	  this.postCollection = [];
 	  this.undoArray = [];
 	  this.arrayIndex = [];
+	  this.localStoreArray = [];
 	  var postTemplate = document.getElementById('blog-post-template');
 	  this.template = _.template(postTemplate.textContent.trim());
 	  this.initialize();
@@ -77,7 +78,11 @@
 	}
 
 	window.addEventListener('beforeunload', function() {
-	    return 'Dialog Text Here';
+
+	  this.localStoreArray.forEach(function(data){
+	    API.removePost(data);
+
+	  });
 	});
 
 	ViewController.prototype.initialize = function() {
@@ -114,6 +119,7 @@
 
 	  var oldPost = this.undoArray.shift();
 	  var oldIndex = this.arrayIndex.shift();
+	  var removeLocalStorage = this.arrayIndex.shift();
 	  this.postCollection.splice(oldIndex, 0, oldPost);
 	  var elements = this.generatePostDOMElements([oldPost[0]]);
 	  this.renderUndoPost(elements, oldIndex);
@@ -123,7 +129,7 @@
 
 	ViewController.prototype.renderUndoPost = function(postDOMElement, index){
 	     var parent = document.getElementsByClassName('blog-body__content')[0];
-	     parent.insertBefore(postDOMElement[0], parent.childNodes[Math.abs(index-this.postCollection.length)]);
+	     parent.insertBefore(postDOMElement[0], parent.children[index]);
 
 
 	}
@@ -165,9 +171,9 @@
 
 	ViewController.prototype.removePost = function(data) {
 	  var postCollection = this.postCollection;
-	  var response = API.removePost(data);
-	  if (response.status ===  200){
-	  
+	  // var response = API.removePost(data);
+	  // if (response.status ===  200){
+	  this.localStoreArray.push(data);
 	  console.log(localStorage);
 	  var index = postCollection.map(function(post){ return post.attributes.id  }).indexOf(data);
 	  this.arrayIndex.push(index); 
@@ -175,10 +181,10 @@
 	  this.undoArray.push(deletedPost);
 	  console.log(postCollection);
 	  this.removeFromUI();
-	  }
-	  else{
-	    console.log("Didnt get removed");
-	  }
+	  // }
+	  // else{
+	  //   console.log("Didnt get removed");
+	  // }
 
 	  // body...
 	};
