@@ -71,15 +71,16 @@ ViewController.prototype.handleUndo = function(){
   var curPost = this.blogPost.shift();
   this.postCollection.splice(oldIndex, 0, oldPost);
   API.updatePost(oldPost);
+  curPost.className = "blog-post"
   }
   else if (type === "add"){
     var curPost = this.postBlog.pop();
     var dataPost = this.dataAddArray.pop();
-
+    API.removePost(dataPost.attributes.id);
+    curPost.className = "blog-post-hide";
   }
 
-  type === 'delete' ? curPost.className = "blog-post" : curPost.className = "blog-post-hide" && API.removePost(dataPost);
-
+   
   if (this.undoArray.length <= 0 && this.postBlog.length <= 0){
     this.hideUndo();
   }
