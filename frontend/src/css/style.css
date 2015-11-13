@@ -98,6 +98,10 @@ body {
   border-bottom: 1px solid #dedede;
 }
 
+.blog-post-hide {
+  display: none;
+}
+
 .blog-post__title {
   font-size: 32px;
   font-family: 'adobe-caslon-pro';
@@ -172,6 +176,11 @@ body {
 .blog-body-undo-post:active{
     background-color: #5ea833;
 
+}
+
+#grey-out{
+  cursor: none;
+  background-color: #e9e9e9;
 
 }
 }

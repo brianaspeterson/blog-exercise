@@ -10,6 +10,9 @@ var ViewController = function(model) {
   this.undoArray = [];
   this.arrayIndex = [];
   this.localStoreArray = [];
+  this.blogPost = [];
+  this.submitType = [];
+  this.postBlog = [];
   var postTemplate = document.getElementById('blog-post-template');
   this.template = _.template(postTemplate.textContent.trim());
   this.initialize();
@@ -27,6 +30,9 @@ window.addEventListener('beforeunload', function() {
     API.removePost(data);
 
   });
+  
+    document.getElementsByClassName('blog-post-hide');
+ 
 });
 
 ViewController.prototype.initialize = function() {
@@ -49,27 +55,55 @@ ViewController.prototype.establishHandlers = function() {
       body: body
     });
   })
+  
+    
 
   document.getElementsByClassName('blog-body-undo-post')[0]
   .addEventListener('click', function(e) {
     e.preventDefault();
     that.handleUndo();
   })
-
-
 }
+
+
 
 ViewController.prototype.handleUndo = function(){
 
+  var type = this.submitType.shift();
+
+  if (type === "delete"){
   var oldPost = this.undoArray.shift();
   var oldIndex = this.arrayIndex.shift();
-  var removeLocalStorage = this.arrayIndex.shift();
+  var curPost = this.blogPost.shift();
   this.postCollection.splice(oldIndex, 0, oldPost);
-  var elements = this.generatePostDOMElements([oldPost[0]]);
-  this.renderUndoPost(elements, oldIndex);
+  //var elements = this.generatePostDOMElements([oldPost[0]]);
+  // this.renderUndoPost(elements, oldIndex);
+  this.localStoreArray.shift();
+  }
+  else if (type === "add"){
+    var curPost = this.postBlog.shift();
+    //add to other array 
+
+  }
+  else {
+    
+    
+  }
+
+  type === 'delete' ? curPost.className = "blog-post" : curPost.className = "blog-post-hide";
+
+  if (this.undoArray.length <= 0){
+    this.hideUndo();
+  }
   //need index so that i can say splice 
 
+
 };
+
+ViewController.prototype.hideUndo = function(){
+  document.getElementsByClassName('blog-body-undo-post')[0].id = "grey-out";
+
+}
 
 ViewController.prototype.renderUndoPost = function(postDOMElement, index){
      var parent = document.getElementsByClassName('blog-body__content')[0];
@@ -117,25 +151,38 @@ ViewController.prototype.removePost = function(data) {
   var postCollection = this.postCollection;
   // var response = API.removePost(data);
   // if (response.status ===  200){
+    this.submitType.push('delete');
   this.localStoreArray.push(data);
   console.log(localStorage);
-  var index = postCollection.map(function(post){ return post.attributes.id  }).indexOf(data);
+  var post = this.getPost(data);
+  var index = postCollection.indexOf(post);
   this.arrayIndex.push(index); 
   var deletedPost = postCollection.splice(index, 1);
-  this.undoArray.push(deletedPost);
+  this.undoArray.push(post);
+  if (this.undoArray){
+    this.showUndo();
+  }
   console.log(postCollection);
-  this.removeFromUI();
-  // }
-  // else{
-  //   console.log("Didnt get removed");
-  // }
+  this.removeFromUITemp();
+  
+};
 
-  // body...
+
+ViewController.prototype.getPost = function(postId) {
+  return _.find(this.postCollection, function(post){
+    return post.attributes.id === postId;
+  });
 };
 
 ViewController.prototype.removeFromUI = function(){
   var curBlogPost = document.activeElement.parentElement;
   curBlogPost.parentNode.removeChild(curBlogPost);
+}
+
+ViewController.prototype.removeFromUITemp = function(){
+  var curBlogPost = document.activeElement.parentElement;
+  curBlogPost.className = "blog-post-hide";
+  this.blogPost.push(curBlogPost);
 }
 
 ViewController.prototype.generatePostDOMElements = function(posts) {
@@ -170,11 +217,20 @@ ViewController.prototype.addPost = function(data) {
   var response = postModel.save();
   if (response.status === 200) {
     this.postCollection.push(postModel);
+    this.submitType.push('add');
+    this.postBlog.push(postModel);
   }
 
   var elements = this.generatePostDOMElements([postModel]);
   this.renderPost(elements[0]);
+  this.showUndo();
 }
 
+
+
+ViewController.prototype.showUndo = function(){
+  document.getElementsByClassName('blog-body-undo-post')[0].id = "";
+
+}
 
 module.exports = ViewController;
