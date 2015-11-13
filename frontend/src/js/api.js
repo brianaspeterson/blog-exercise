@@ -60,7 +60,30 @@ var API = {
     localStorage.removeItem(POST_KEY_PREFIX + data);
 
     return result;
+  },
+  updatePost: function(data){
+    var result = {
+      status: 200
+    };
+    if (!data.attributes.title || !data.attributes.body || !_.isPlainObject(data.attributes)) {
+      result.status = 400;
+    }
+    else{
+      var maxId = localStorage.getItem(MAX_POST_KEY);
+      var lastPostId = data.attributes.id;
+
+      var stringData = JSON.stringify(data.attributes);
+      localStorage.setItem(POST_KEY_PREFIX + data.attributes.id, stringData);
+      localStorage.setItem(MAX_POST_KEY, lastPostId.toString());
+
+      result.body = stringData;
+    }
+    return result;
+  
+
+
   }
+
 }
 
 

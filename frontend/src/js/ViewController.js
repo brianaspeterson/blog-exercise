@@ -3,37 +3,31 @@ var API = require('./api'),
     _ = require('lodash');
 
 
-
 var ViewController = function(model) {
   this.model = model;
   this.postCollection = [];
   this.undoArray = [];
   this.arrayIndex = [];
-  this.localStoreArray = [];
   this.blogPost = [];
   this.submitType = [];
   this.postBlog = [];
+  this.dataAddArray = [];
   var postTemplate = document.getElementById('blog-post-template');
   this.template = _.template(postTemplate.textContent.trim());
   this.initialize();
 };
 
-if (typeof window.addEventListener === 'undefined') {
-    window.addEventListener = function(e, callback) {
-        return window.attachEvent('on' + e, callback);
-    }
-}
+ViewController.prototype.establishDeleteHandlers = function(button, post) {
+    var that = this;
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      var curId = this.attributes.id;
 
-window.addEventListener('beforeunload', function() {
-
-  this.localStoreArray.forEach(function(data){
-    API.removePost(data);
-
-  });
-  
-    document.getElementsByClassName('blog-post-hide');
- 
-});
+        that.handleDelete(curId);
+       
+      
+    }.bind(post))
+};
 
 ViewController.prototype.initialize = function() {
   this.establishHandlers();
@@ -69,34 +63,26 @@ ViewController.prototype.establishHandlers = function() {
 
 ViewController.prototype.handleUndo = function(){
 
-  var type = this.submitType.shift();
+  var type = this.submitType.pop();
 
   if (type === "delete"){
   var oldPost = this.undoArray.shift();
   var oldIndex = this.arrayIndex.shift();
   var curPost = this.blogPost.shift();
   this.postCollection.splice(oldIndex, 0, oldPost);
-  //var elements = this.generatePostDOMElements([oldPost[0]]);
-  // this.renderUndoPost(elements, oldIndex);
-  this.localStoreArray.shift();
+  API.updatePost(oldPost);
   }
   else if (type === "add"){
-    var curPost = this.postBlog.shift();
-    //add to other array 
+    var curPost = this.postBlog.pop();
+    var dataPost = this.dataAddArray.pop();
 
   }
-  else {
-    
-    
-  }
 
-  type === 'delete' ? curPost.className = "blog-post" : curPost.className = "blog-post-hide";
+  type === 'delete' ? curPost.className = "blog-post" : curPost.className = "blog-post-hide" && API.removePost(dataPost);
 
-  if (this.undoArray.length <= 0){
+  if (this.undoArray.length <= 0 && this.postBlog.length <= 0){
     this.hideUndo();
   }
-  //need index so that i can say splice 
-
 
 };
 
@@ -149,11 +135,7 @@ ViewController.prototype.handleDelete = function(data) {
 
 ViewController.prototype.removePost = function(data) {
   var postCollection = this.postCollection;
-  // var response = API.removePost(data);
-  // if (response.status ===  200){
-    this.submitType.push('delete');
-  this.localStoreArray.push(data);
-  console.log(localStorage);
+  this.submitType.push('delete');
   var post = this.getPost(data);
   var index = postCollection.indexOf(post);
   this.arrayIndex.push(index); 
@@ -162,11 +144,19 @@ ViewController.prototype.removePost = function(data) {
   if (this.undoArray){
     this.showUndo();
   }
-  console.log(postCollection);
+
+
+
   this.removeFromUITemp();
+  this.removeFromLocalStorage(data);
   
 };
 
+ViewController.prototype.removeFromLocalStorage = function(id){
+
+  API.removePost(id);
+
+}
 
 ViewController.prototype.getPost = function(postId) {
   return _.find(this.postCollection, function(post){
@@ -180,6 +170,8 @@ ViewController.prototype.removeFromUI = function(){
 }
 
 ViewController.prototype.removeFromUITemp = function(){
+  console.log(localStorage);
+
   var curBlogPost = document.activeElement.parentElement;
   curBlogPost.className = "blog-post-hide";
   this.blogPost.push(curBlogPost);
@@ -218,12 +210,16 @@ ViewController.prototype.addPost = function(data) {
   if (response.status === 200) {
     this.postCollection.push(postModel);
     this.submitType.push('add');
-    this.postBlog.push(postModel);
-  }
-
-  var elements = this.generatePostDOMElements([postModel]);
+    this.dataAddArray.push(postModel);
+    var elements = this.generatePostDOMElements([postModel]);
   this.renderPost(elements[0]);
+  this.postBlog.push(elements[0]);
   this.showUndo();
+  }
+  else {
+
+      alert("Post is empty");
+  }
 }
 
 
