@@ -1,9 +1,4 @@
-The SeatGeek Frontend Coding Test
-===
 
-Hello, and welcome to SeatGeek's frontend coding test, a verifiable way to add some delight to your day!
-
-In this challenge you'll be tasked with undertaking some development work on a personal blogging utility called Chairnerd after our [actual company blog](http://chairnerd.seatgeek.com/). We're looking primarily at your ability to work with an existing framework by developing new features within it.
 
 Playing around with Chairnerd
 ===
@@ -38,7 +33,3 @@ Restrictions
 
 In completing this task, you must observe the following restriction: the **only** external libraries you may use are those that deal with the manipulation of data strucures. You may include a library that does more than that, but only if you limit your use of it to the manipulation of data structures. Examples of acceptable libraries are lo-dash or mori. An example of a mostly unacceptable library is jQuery, because it deals directly with DOM manipulation. You may, however, use jQuery.extend if you choose. You may not use frameworks such as Backbone, Angular, or React.
 
-Privacy
-===
-
-You should not make the contents of this challenge, in whole on in part, available to the public, or grant access to it to any person other than yourself.
